@@ -112,7 +112,7 @@ func testStartServer(t *testing.T, server serverz.Server) {
 	}
 
 	if s, ok := server.(*serverz.NamedServer); ok {
-		if got, want := hook.LastEntry().Data["name"], s.Name; got != want {
+		if got, want := hook.LastEntry().Data["server"], s.Name; got != want {
 			t.Fatal("serverz: server should log it's name")
 		}
 	}
@@ -179,7 +179,7 @@ func testListenAndStartServer(t *testing.T, server serverz.Server) {
 	}
 
 	if s, ok := server.(*serverz.NamedServer); ok {
-		if got, want := hook.LastEntry().Data["name"], s.Name; got != want {
+		if got, want := hook.LastEntry().Data["server"], s.Name; got != want {
 			t.Fatal("serverz: server should log it's name")
 		}
 	}
@@ -232,7 +232,7 @@ func testStopServer(t *testing.T, server serverz.Server) {
 	}
 
 	if s, ok := server.(*serverz.NamedServer); ok {
-		if got, want := hook.LastEntry().Data["name"], s.Name; got != want {
+		if got, want := hook.LastEntry().Data["server"], s.Name; got != want {
 			t.Fatal("serverz: server should log it's name")
 		}
 	}

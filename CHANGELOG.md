@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.1.3 - 2017-02-28
+
+### Changed
+
+- Renamed "name" field to "server"
+
+
 ## 0.1.2 - 2017-02-28
 
 ### Changed

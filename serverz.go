@@ -24,7 +24,7 @@ func (sm *ServerManager) StartServer(server Server, listener net.Listener) func(
 	logger := sm.logger
 
 	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("name", s.Name)
+		logger = logger.WithField("server", s.Name)
 	}
 
 	return func(ch chan<- error) {
@@ -38,7 +38,7 @@ func (sm *ServerManager) ListenAndStartServer(server Server, addr string) func(c
 	logger := sm.logger
 
 	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("name", s.Name)
+		logger = logger.WithField("server", s.Name)
 	}
 
 	listener, err := net.Listen("tcp", addr)
@@ -58,7 +58,7 @@ func (sm *ServerManager) StopServer(server Server, wg *sync.WaitGroup) func(ctx 
 	logger := sm.logger
 
 	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("name", s.Name)
+		logger = logger.WithField("server", s.Name)
 	}
 
 	return func(ctx context.Context) {
