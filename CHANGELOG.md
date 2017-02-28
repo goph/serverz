@@ -6,3 +6,4 @@
 ### Added
 
 - Shutdown handler
+- Server manager
