@@ -66,25 +66,8 @@ func (s *TestServer) Close() error {
 
 func TestServerManagerStartServer(t *testing.T) {
 	server := &TestServer{}
-	logger, hook := logrus_test.NewNullLogger()
-	serverManager := serverz.NewServerManager(logger)
 
-	f := serverManager.StartServer(server, &TestListener{})
-
-	ch := make(chan error, 1)
-	f(ch)
-
-	if got, want := server.ServeCalled, true; got != want {
-		t.Fatal("serverz: Server.Serve should be called")
-	}
-
-	if got, want, gotLevel, wantLevel := hook.LastEntry().Message, "Server started", hook.LastEntry().Level, logrus.InfoLevel; got != want || gotLevel != wantLevel {
-		t.Fatal("serverz: server should be started")
-	}
-
-	if got, want := hook.LastEntry().Data["addr"], "127.0.0.1:65123"; got != want {
-		t.Fatal("serverz: address should be logged")
-	}
+	testStartServer(t, server)
 }
 
 func TestServerManagerStartServer_NamedServer(t *testing.T) {
@@ -93,50 +76,52 @@ func TestServerManagerStartServer_NamedServer(t *testing.T) {
 		Name:   "ServerName",
 	}
 
+	testStartServer(t, server)
+}
+
+func testStartServer(t *testing.T, server serverz.Server) {
 	logger, hook := logrus_test.NewNullLogger()
 	serverManager := serverz.NewServerManager(logger)
 
-	f := serverManager.StartServer(server, &TestListener{})
-
 	ch := make(chan error, 1)
-	f(ch)
+	serverManager.StartServer(server, &TestListener{})(ch)
+	close(ch)
 
-	if got, want := server.Server.(*TestServer).ServeCalled, true; got != want {
+	var called bool
+
+	if s, ok := server.(*serverz.NamedServer); ok {
+		called = s.Server.(*TestServer).ServeCalled
+	} else {
+		called = server.(*TestServer).ServeCalled
+	}
+
+	if got, want := called, true; got != want {
 		t.Fatal("serverz: Server.Serve should be called")
 	}
 
-	if got, want, gotLevel, wantLevel := hook.LastEntry().Message, "ServerName started", hook.LastEntry().Level, logrus.InfoLevel; got != want || gotLevel != wantLevel {
+	if got, want := hook.LastEntry().Message, "Starting server"; got != want {
 		t.Fatal("serverz: server should be started")
+	}
+
+	if got, want := hook.LastEntry().Level, logrus.InfoLevel; got != want {
+		t.Fatal("serverz: server start is info level")
 	}
 
 	if got, want := hook.LastEntry().Data["addr"], "127.0.0.1:65123"; got != want {
 		t.Fatal("serverz: address should be logged")
+	}
+
+	if s, ok := server.(*serverz.NamedServer); ok {
+		if got, want := hook.LastEntry().Data["name"], s.Name; got != want {
+			t.Fatal("serverz: server should log it's name")
+		}
 	}
 }
 
 func TestServerManagerListenAndStartServer(t *testing.T) {
 	server := &TestServer{}
 
-	logger, hook := logrus_test.NewNullLogger()
-	serverManager := serverz.NewServerManager(logger)
-
-	f := serverManager.ListenAndStartServer(server, "127.0.0.1:65123")
-
-	ch := make(chan error, 1)
-	f(ch)
-	server.Close()
-
-	if got, want := server.ServeCalled, true; got != want {
-		t.Fatal("serverz: Server.Serve should be called")
-	}
-
-	if got, want, gotLevel, wantLevel := hook.LastEntry().Message, "Server started", hook.LastEntry().Level, logrus.InfoLevel; got != want || gotLevel != wantLevel {
-		t.Fatal("serverz: server should be started")
-	}
-
-	if got, want := hook.LastEntry().Data["addr"], "127.0.0.1:65123"; got != want {
-		t.Fatal("serverz: address should be logged")
-	}
+	testListenAndStartServer(t, server)
 }
 
 func TestServerManagerListenAndStartServer_NamedServer(t *testing.T) {
@@ -145,48 +130,65 @@ func TestServerManagerListenAndStartServer_NamedServer(t *testing.T) {
 		Name:   "ServerName",
 	}
 
+	testListenAndStartServer(t, server)
+}
+
+func testListenAndStartServer(t *testing.T, server serverz.Server) {
 	logger, hook := logrus_test.NewNullLogger()
 	serverManager := serverz.NewServerManager(logger)
 
-	f := serverManager.ListenAndStartServer(server, "127.0.0.1:65123")
-
 	ch := make(chan error, 1)
-	f(ch)
+	serverManager.ListenAndStartServer(server, "127.0.0.1:65123")(ch)
 	server.Close()
+	close(ch)
 
-	if got, want := server.Server.(*TestServer).ServeCalled, true; got != want {
+	var called bool
+
+	if s, ok := server.(*serverz.NamedServer); ok {
+		called = s.Server.(*TestServer).ServeCalled
+	} else {
+		called = server.(*TestServer).ServeCalled
+	}
+
+	if got, want := called, true; got != want {
 		t.Fatal("serverz: Server.Serve should be called")
 	}
 
-	if got, want, gotLevel, wantLevel := hook.LastEntry().Message, "ServerName started", hook.LastEntry().Level, logrus.InfoLevel; got != want || gotLevel != wantLevel {
+	if got, want := hook.Entries[0].Message, "Listening on address"; got != want {
+		t.Fatal("serverz: server should listen on address")
+	}
+
+	if got, want := hook.Entries[0].Level, logrus.InfoLevel; got != want {
+		t.Fatal("serverz: listen is info level")
+	}
+
+	if got, want := hook.Entries[0].Data["addr"], "127.0.0.1:65123"; got != want {
+		t.Fatal("serverz: server should log it's addr")
+	}
+
+	if got, want := hook.LastEntry().Message, "Starting server"; got != want {
 		t.Fatal("serverz: server should be started")
+	}
+
+	if got, want := hook.LastEntry().Level, logrus.InfoLevel; got != want {
+		t.Fatal("serverz: server start is info level")
 	}
 
 	if got, want := hook.LastEntry().Data["addr"], "127.0.0.1:65123"; got != want {
 		t.Fatal("serverz: address should be logged")
+	}
+
+	if s, ok := server.(*serverz.NamedServer); ok {
+		if got, want := hook.LastEntry().Data["name"], s.Name; got != want {
+			t.Fatal("serverz: server should log it's name")
+		}
 	}
 }
 
 func TestServerManagerStopServer(t *testing.T) {
 	server := &TestServer{}
 
-	logger, hook := logrus_test.NewNullLogger()
-	serverManager := serverz.NewServerManager(logger)
-
-	var wg sync.WaitGroup
-
-	f := serverManager.StopServer(server, &wg)
-
-	ctx := context.Background()
-	f(ctx)
-
-	if got, want := server.ShutdownCalled, true; got != want {
-		t.Fatal("serverz: Server.Shutdown should be called")
-	}
-
-	if got, want, gotLevel, wantLevel := hook.LastEntry().Message, "Stopping Server", hook.LastEntry().Level, logrus.InfoLevel; got != want || gotLevel != wantLevel {
-		t.Fatal("serverz: server should be started")
-	}
+	testStopServer(t, server)
 }
 
 func TestServerManagerStopServer_NamedServer(t *testing.T) {
@@ -195,6 +197,10 @@ func TestServerManagerStopServer_NamedServer(t *testing.T) {
 		Name:   "ServerName",
 	}
 
+	testStopServer(t, server)
+}
+
+func testStopServer(t *testing.T, server serverz.Server) {
 	logger, hook := logrus_test.NewNullLogger()
 	serverManager := serverz.NewServerManager(logger)
 
@@ -205,11 +211,29 @@ func TestServerManagerStopServer_NamedServer(t *testing.T) {
 	ctx := context.Background()
 	f(ctx)
 
-	if got, want := server.Server.(*TestServer).ShutdownCalled, true; got != want {
+	var called bool
+
+	if s, ok := server.(*serverz.NamedServer); ok {
+		called = s.Server.(*TestServer).ShutdownCalled
+	} else {
+		called = server.(*TestServer).ShutdownCalled
+	}
+
+	if got, want := called, true; got != want {
 		t.Fatal("serverz: Server.Shutdown should be called")
 	}
 
-	if got, want, gotLevel, wantLevel := hook.LastEntry().Message, "Stopping ServerName", hook.LastEntry().Level, logrus.InfoLevel; got != want || gotLevel != wantLevel {
-		t.Fatal("serverz: server should be started")
+	if got, want := hook.LastEntry().Message, "Stopping server"; got != want {
+		t.Fatal("serverz: server should be stopped")
+	}
+
+	if got, want := hook.LastEntry().Level, logrus.InfoLevel; got != want {
+		t.Fatal("serverz: server stop is info level")
+	}
+
+	if s, ok := server.(*serverz.NamedServer); ok {
+		if got, want := hook.LastEntry().Data["name"], s.Name; got != want {
+			t.Fatal("serverz: server should log it's name")
+		}
 	}
 }
