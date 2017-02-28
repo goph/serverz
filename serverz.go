@@ -66,7 +66,7 @@ func (sm *ServerManager) StopServer(server Server, wg *sync.WaitGroup) func(ctx 
 
 		err := server.Shutdown(ctx)
 		if err != nil {
-			sm.logger.Error(err)
+			logger.Error(err)
 		}
 
 		wg.Done()

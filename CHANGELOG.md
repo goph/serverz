@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.1.2 - 2017-02-28
+
+### Changed
+
+- Improved logging
+
+
 ## 0.1.1 - 2017-02-28
 
 ### Changed
