@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.3.0 - 2017-05-16
+
+### Removed
+
+- Shutdown manager (use [sagikazarmark/utilz](https://github.com/sagikazarmark/utilz) instead)
+
+
 ## 0.2.0 - 2017-03-02
 
 ### Added
