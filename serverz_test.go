@@ -7,9 +7,9 @@ import (
 
 	"sync"
 
-	"github.com/Sirupsen/logrus"
-	logrus_test "github.com/Sirupsen/logrus/hooks/test"
 	"github.com/sagikazarmark/serverz"
+	"github.com/sirupsen/logrus"
+	logrus_test "github.com/sirupsen/logrus/hooks/test"
 )
 
 type TestListener struct{}

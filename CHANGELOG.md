@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.4.0 - 2017-06-08
+
+### Fixed
+
+- [github.com/sirupsen/logrus](https://github.com/sirupsen/logrus) dependency
+
 
 ## 0.3.0 - 2017-05-16
 

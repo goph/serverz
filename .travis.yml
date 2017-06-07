@@ -8,7 +8,9 @@ go:
 
 before_install:
     - mkdir -p $HOME/bin
-    - curl -s https://raw.githubusercontent.com/sagikazarmark/traviscripts/e106b6d593915a0cb736919ecb3804e8eb5e0440/scripts/glide.sh | bash
+    - curl -sL http://get.binhq.io/gitbin | DEST=$HOME/bin bash
+    - gitbin get Masterminds/glide 0.12.3 -o $HOME/bin
+    - make envcheck
 
 before_script: make install || true
 
