@@ -7,7 +7,7 @@ import (
 
 	"sync"
 
-	"github.com/sagikazarmark/serverz"
+	"github.com/goph/serverz"
 	"github.com/sirupsen/logrus"
 	logrus_test "github.com/sirupsen/logrus/hooks/test"
 )

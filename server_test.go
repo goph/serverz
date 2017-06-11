@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/sagikazarmark/serverz"
+	"github.com/goph/serverz"
 )
 
 func TestNamedServerServe(t *testing.T) {

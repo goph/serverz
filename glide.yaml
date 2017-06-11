@@ -1,4 +1,4 @@
-package: github.com/sagikazarmark/serverz
+package: github.com/goph/serverz
 import:
 - package: github.com/sirupsen/logrus
   version: ^1.0.0
