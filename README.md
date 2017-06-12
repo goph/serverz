@@ -7,20 +7,6 @@
 **Web app toolkit to easily manage server based environments.**
 
 
-## Documentation
-
-
-## Development
-
-You need [Glide](http://glide.sh/) to install dependencies.
-
-`$ make install`
-
-Run tests and linters:
-
-`$ make check`
-
-
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.

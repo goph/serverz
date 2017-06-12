@@ -1,5 +1,11 @@
 # Change Log
 
+## Unreleased
+
+## Added
+
+- `ServerQueue` to fully manage servers
+
 
 ## 0.4.0 - 2017-06-08
 

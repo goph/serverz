@@ -1,47 +1,45 @@
-package serverz_test
+package serverz
 
 import (
 	"context"
 	"testing"
-
-	"github.com/goph/serverz"
 )
 
-func TestNamedServerServe(t *testing.T) {
-	spy := &TestServer{}
-	ns := &serverz.NamedServer{
+func TestNamedServer_Serve(t *testing.T) {
+	spy := &testServer{}
+	server := &NamedServer{
 		Server: spy,
 	}
 
-	ns.Serve(&TestListener{})
+	server.Serve(&testListener{})
 
-	if got, want := spy.ServeCalled, true; got != want {
-		t.Fatal("server: Server.Serve should be called")
+	if spy.ServeCalled != true {
+		t.Fatal("Server.Serve should be called")
 	}
 }
 
-func TestNamedServerShutdown(t *testing.T) {
-	spy := &TestServer{}
-	ns := &serverz.NamedServer{
+func TestNamedServer_Shutdown(t *testing.T) {
+	spy := &testServer{}
+	server := &NamedServer{
 		Server: spy,
 	}
 
-	ns.Shutdown(context.Background())
+	server.Shutdown(context.Background())
 
-	if got, want := spy.ShutdownCalled, true; got != want {
-		t.Fatal("server: Server.Shutdown should be called")
+	if spy.ShutdownCalled != true {
+		t.Fatal("Server.Shutdown should be called")
 	}
 }
 
-func TestNamedServerClose(t *testing.T) {
-	spy := &TestServer{}
-	ns := &serverz.NamedServer{
+func TestNamedServer_Close(t *testing.T) {
+	spy := &testServer{}
+	server := &NamedServer{
 		Server: spy,
 	}
 
-	ns.Close()
+	server.Close()
 
-	if got, want := spy.CloseCalled, true; got != want {
-		t.Fatal("server: Server.Close should be called")
+	if spy.CloseCalled != true {
+		t.Fatal("Server.Close should be called")
 	}
 }

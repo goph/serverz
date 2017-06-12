@@ -1,7 +1,5 @@
 package: github.com/goph/serverz
-import:
-- package: github.com/sirupsen/logrus
-  version: ^1.0.0
+import: []
 testImport:
 - package: google.golang.org/grpc
   version: ^1.4.0
