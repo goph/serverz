@@ -6,6 +6,10 @@
 
 - `ServerQueue` to fully manage servers
 
+## Changed
+
+- Moved `GrpcServer` to `grpc.Server`
+
 
 ## 0.4.0 - 2017-06-08
 

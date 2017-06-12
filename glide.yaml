@@ -1,5 +1,4 @@
 package: github.com/goph/serverz
-import: []
-testImport:
+import:
 - package: google.golang.org/grpc
   version: ^1.4.0

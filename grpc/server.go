@@ -1,4 +1,4 @@
-package serverz
+package grpc
 
 import (
 	"context"
@@ -7,13 +7,13 @@ import (
 	"google.golang.org/grpc"
 )
 
-// GrpcServer implements the Server interface for a gRPC server
-type GrpcServer struct {
+// Server implements the Server interface for a gRPC server
+type Server struct {
 	*grpc.Server
 }
 
 // Shutdown implements Server interface
-func (s *GrpcServer) Shutdown(ctx context.Context) error {
+func (s *Server) Shutdown(ctx context.Context) error {
 	wg := &sync.WaitGroup{}
 	c := make(chan struct{})
 
@@ -32,7 +32,7 @@ func (s *GrpcServer) Shutdown(ctx context.Context) error {
 }
 
 // Close implements Server
-func (s *GrpcServer) Close() error {
+func (s *Server) Close() error {
 	s.Server.Stop()
 
 	return nil
