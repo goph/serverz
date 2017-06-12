@@ -18,5 +18,5 @@ before_install:
 before_script: glide install
 
 script:
-    - go test
+    - go test $(go list ./... | grep -v /vendor/)
     - gofmt -l $(find . -type f -name "*.go" -not -path "./vendor/*") | read something && echo "Code differs from gofmt's style" 1>&2 && exit 1 || true
