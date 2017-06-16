@@ -1,13 +1,16 @@
-package serverz
+package serverz_test
 
 import (
-	"context"
 	"testing"
+
+	"context"
+
+	"github.com/goph/serverz"
 )
 
 func TestNamedServer_Serve(t *testing.T) {
 	spy := &testServer{}
-	server := &NamedServer{
+	server := &serverz.NamedServer{
 		Server: spy,
 	}
 
@@ -20,7 +23,7 @@ func TestNamedServer_Serve(t *testing.T) {
 
 func TestNamedServer_Shutdown(t *testing.T) {
 	spy := &testServer{}
-	server := &NamedServer{
+	server := &serverz.NamedServer{
 		Server: spy,
 	}
 
@@ -33,7 +36,7 @@ func TestNamedServer_Shutdown(t *testing.T) {
 
 func TestNamedServer_Close(t *testing.T) {
 	spy := &testServer{}
-	server := &NamedServer{
+	server := &serverz.NamedServer{
 		Server: spy,
 	}
 

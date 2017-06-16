@@ -1,4 +1,4 @@
-package serverz
+package serverz_test
 
 import (
 	"testing"
@@ -6,6 +6,8 @@ import (
 	"context"
 	"net"
 	"sync"
+
+	"github.com/goph/serverz"
 )
 
 type testListener struct{}
@@ -67,7 +69,7 @@ func TestServerManagerStartServer(t *testing.T) {
 }
 
 func TestServerManagerStartServer_NamedServer(t *testing.T) {
-	server := &NamedServer{
+	server := &serverz.NamedServer{
 		Server: &testServer{},
 		Name:   "ServerName",
 	}
@@ -75,8 +77,8 @@ func TestServerManagerStartServer_NamedServer(t *testing.T) {
 	testStartServer(t, server)
 }
 
-func testStartServer(t *testing.T, server Server) {
-	serverManager := NewManager()
+func testStartServer(t *testing.T, server serverz.Server) {
+	serverManager := serverz.NewManager()
 
 	ch := make(chan error, 1)
 	serverManager.StartServer(server, &testListener{})(ch)
@@ -84,7 +86,7 @@ func testStartServer(t *testing.T, server Server) {
 
 	var called bool
 
-	if s, ok := server.(*NamedServer); ok {
+	if s, ok := server.(*serverz.NamedServer); ok {
 		called = s.Server.(*testServer).ServeCalled
 	} else {
 		called = server.(*testServer).ServeCalled
@@ -102,7 +104,7 @@ func TestServerManagerListenAndStartServer(t *testing.T) {
 }
 
 func TestServerManagerListenAndStartServer_NamedServer(t *testing.T) {
-	server := &NamedServer{
+	server := &serverz.NamedServer{
 		Server: &testServer{},
 		Name:   "ServerName",
 	}
@@ -110,8 +112,8 @@ func TestServerManagerListenAndStartServer_NamedServer(t *testing.T) {
 	testListenAndStartServer(t, server)
 }
 
-func testListenAndStartServer(t *testing.T, server Server) {
-	serverManager := NewManager()
+func testListenAndStartServer(t *testing.T, server serverz.Server) {
+	serverManager := serverz.NewManager()
 
 	ch := make(chan error, 1)
 	serverManager.ListenAndStartServer(server, "127.0.0.1:65123")(ch)
@@ -120,7 +122,7 @@ func testListenAndStartServer(t *testing.T, server Server) {
 
 	var called bool
 
-	if s, ok := server.(*NamedServer); ok {
+	if s, ok := server.(*serverz.NamedServer); ok {
 		called = s.Server.(*testServer).ServeCalled
 	} else {
 		called = server.(*testServer).ServeCalled
@@ -138,7 +140,7 @@ func TestServerManagerStopServer(t *testing.T) {
 }
 
 func TestServerManagerStopServer_NamedServer(t *testing.T) {
-	server := &NamedServer{
+	server := &serverz.NamedServer{
 		Server: &testServer{},
 		Name:   "ServerName",
 	}
@@ -146,8 +148,8 @@ func TestServerManagerStopServer_NamedServer(t *testing.T) {
 	testStopServer(t, server)
 }
 
-func testStopServer(t *testing.T, server Server) {
-	serverManager := NewManager()
+func testStopServer(t *testing.T, server serverz.Server) {
+	serverManager := serverz.NewManager()
 
 	var wg sync.WaitGroup
 
@@ -158,7 +160,7 @@ func testStopServer(t *testing.T, server Server) {
 
 	var called bool
 
-	if s, ok := server.(*NamedServer); ok {
+	if s, ok := server.(*serverz.NamedServer); ok {
 		called = s.Server.(*testServer).ShutdownCalled
 	} else {
 		called = server.(*testServer).ShutdownCalled
