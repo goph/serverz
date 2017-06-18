@@ -22,24 +22,24 @@ func NewManager() *Manager {
 
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
-	logger := m.Logger
+	l := m.Logger
 
 	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("server", s.Name)
+		l = l.WithField("server", s.Name).(logger)
 	}
 
 	return func(ch chan<- error) {
-		logger.WithField("addr", lis.Addr().String()).Info("Starting server")
+		l.WithField("addr", lis.Addr().String()).(logger).Info("Starting server")
 		ch <- server.Serve(lis)
 	}
 }
 
 // ListenAndStartServer creates a server starter function which listens on a port and can be called as a goroutine
 func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<- error) {
-	logger := m.Logger
+	l := m.Logger
 
 	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("server", s.Name)
+		l = l.WithField("server", s.Name).(logger)
 	}
 
 	lis, err := net.Listen("tcp", addr)
@@ -48,7 +48,7 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 		panic(err)
 	}
 
-	logger.WithField("addr", lis.Addr().String()).Info("Listening on address")
+	l.WithField("addr", lis.Addr().String()).(logger).Info("Listening on address")
 
 	return m.StartServer(server, lis)
 }
@@ -57,14 +57,14 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context.Context) {
 	wg.Add(1)
 
-	logger := m.Logger
+	l := m.Logger
 
 	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("server", s.Name)
+		l = l.WithField("server", s.Name).(logger)
 	}
 
 	return func(ctx context.Context) {
-		logger.Info("Stopping server")
+		l.Info("Stopping server")
 
 		err := server.Shutdown(ctx)
 		if err != nil && err != ctx.Err() {
