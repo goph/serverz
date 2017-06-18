@@ -4,21 +4,11 @@ package serverz
 //
 // See https://github.com/goph/log
 type logger interface {
-	WithField(key string, value interface{}) interface{}
-
 	Info(args ...interface{})
-	Error(args ...interface{})
 }
 
 // noopLogger is a default fallback implementation.
 type noopLogger struct{}
 
-func (l *noopLogger) WithField(key string, value interface{}) interface{} {
-	return l
-}
-
 func (l *noopLogger) Info(args ...interface{}) {
-}
-
-func (l *noopLogger) Error(args ...interface{}) {
 }

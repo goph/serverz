@@ -6,6 +6,7 @@
 ### Changed
 
 - Moved back to `_test` test packages
+- Rewritten logger interface
 
 
 ## 0.5.0 - 2017-06-12
