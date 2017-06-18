@@ -22,33 +22,25 @@ func NewManager() *Manager {
 
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
-	logger := m.Logger
-
-	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("server", s.Name)
-	}
+	lctx := logServerAddr(server, lis)
 
 	return func(ch chan<- error) {
-		logger.WithField("addr", lis.Addr().String()).Info("Starting server")
+		m.Logger.Info("Starting server", lctx)
 		ch <- server.Serve(lis)
 	}
 }
 
 // ListenAndStartServer creates a server starter function which listens on a port and can be called as a goroutine
 func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<- error) {
-	logger := m.Logger
-
-	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("server", s.Name)
-	}
-
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		m.ErrorHandler.Handle(err)
 		panic(err)
 	}
 
-	logger.WithField("addr", lis.Addr().String()).Info("Listening on address")
+	lctx := logServerAddr(server, lis)
+
+	m.Logger.Info("Listening on address", lctx)
 
 	return m.StartServer(server, lis)
 }
@@ -57,14 +49,10 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context.Context) {
 	wg.Add(1)
 
-	logger := m.Logger
-
-	if s, ok := server.(*NamedServer); ok {
-		logger = logger.WithField("server", s.Name)
-	}
+	lctx := logServer(server)
 
 	return func(ctx context.Context) {
-		logger.Info("Stopping server")
+		m.Logger.Info("Stopping server", lctx)
 
 		err := server.Shutdown(ctx)
 		if err != nil && err != ctx.Err() {
@@ -73,4 +61,22 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 
 		wg.Done()
 	}
+}
+
+func logServerAddr(s Server, l net.Listener) map[string]interface{} {
+	ctx := logServer(s)
+
+	ctx["addr"] = l.Addr().String()
+
+	return ctx
+}
+
+func logServer(s Server) map[string]interface{} {
+	ctx := make(map[string]interface{})
+
+	if s, ok := s.(*NamedServer); ok {
+		ctx["server"] = s.Name
+	}
+
+	return ctx
 }
