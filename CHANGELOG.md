@@ -1,6 +1,17 @@
 # Change Log
 
 
+## Unreleased
+
+### Added
+
+- Constructor for Queue
+
+### Changed
+
+- Renamed `ServerQueue` to `Queue`
+
+
 ## 0.6.0 - 2016-06-18
 
 ### Changed

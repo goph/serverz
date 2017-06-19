@@ -10,15 +10,22 @@ type serverItem struct {
 	addr   string
 }
 
-// ServerQueue holds a list of servers and starts them at once.
-type ServerQueue struct {
+// Queue holds a list of servers and starts them at once.
+type Queue struct {
 	servers []*serverItem
 
-	manager Manager
+	manager *Manager
+}
+
+// NewQueue returns a new Queue.
+func NewQueue(manager *Manager) *Queue {
+	return &Queue{
+		manager: manager,
+	}
 }
 
 // Append appends a new server to the list of existing ones.
-func (q *ServerQueue) Append(server Server, addr string) {
+func (q *Queue) Append(server Server, addr string) {
 	q.servers = append(
 		q.servers,
 		&serverItem{
@@ -29,7 +36,7 @@ func (q *ServerQueue) Append(server Server, addr string) {
 }
 
 // Prepend prepends a new server to the list of existing ones.
-func (q *ServerQueue) Prepend(server Server, addr string) {
+func (q *Queue) Prepend(server Server, addr string) {
 	q.servers = append(
 		[]*serverItem{
 			&serverItem{
@@ -42,7 +49,7 @@ func (q *ServerQueue) Prepend(server Server, addr string) {
 }
 
 // Start starts all the servers.
-func (q *ServerQueue) Start() <-chan error {
+func (q *Queue) Start() <-chan error {
 	ch := make(chan error, 2*len(q.servers))
 
 	for _, server := range q.servers {
@@ -53,7 +60,7 @@ func (q *ServerQueue) Start() <-chan error {
 }
 
 // Stop tries to gracefully stop all the servers.
-func (q *ServerQueue) Stop(ctx context.Context) {
+func (q *Queue) Stop(ctx context.Context) {
 	wg := &sync.WaitGroup{}
 
 	for _, server := range q.servers {
