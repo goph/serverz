@@ -60,12 +60,21 @@ func (q *Queue) Start() <-chan error {
 }
 
 // Stop tries to gracefully stop all the servers.
-func (q *Queue) Stop(ctx context.Context) {
+func (q *Queue) Stop(ctx context.Context) error {
 	wg := &sync.WaitGroup{}
+	merr := newMultiError("An error ocurred during server shutdown")
 
 	for _, server := range q.servers {
-		go q.manager.StopServer(server.server, wg)(ctx)
+		go func(server *serverItem) {
+			wg.Add(1)
+			err := q.manager.StopServer(server.server, wg)(ctx)
+			merr.append(err)
+
+			wg.Done()
+		}(server)
 	}
 
 	wg.Wait()
+
+	return merr.errOrNil()
 }
