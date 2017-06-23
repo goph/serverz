@@ -37,7 +37,6 @@ func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- er
 func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<- error) {
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		m.ErrorHandler.Handle(err)
 		panic(err)
 	}
 

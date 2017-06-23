@@ -6,6 +6,7 @@
 ### Changed
 
 - Use Go-kit's log interface
+- Panics are not handled by the error handler anymore
 
 
 ## 0.7.0 - 2016-06-19
