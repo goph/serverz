@@ -4,11 +4,12 @@ package serverz
 //
 // See https://github.com/goph/log
 type logger interface {
-	Info(args ...interface{})
+	Log(keyvals ...interface{}) error
 }
 
 // noopLogger is a default fallback implementation.
 type noopLogger struct{}
 
-func (l *noopLogger) Info(args ...interface{}) {
+func (l *noopLogger) Log(keyvals ...interface{}) error {
+	return nil
 }
