@@ -8,15 +8,13 @@ import (
 
 // Manager manages multiple Servers' lifecycle.
 type Manager struct {
-	Logger       logger
-	ErrorHandler errorHandler
+	Logger logger
 }
 
 // NewManager creates a new Manager.
 func NewManager() *Manager {
 	return &Manager{
 		&noopLogger{},
-		&noopErrorHandler{},
 	}
 }
 
@@ -51,7 +49,7 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 }
 
 // StopServer creates a server stopper function which can be called as a goroutine
-func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context.Context) {
+func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context.Context) error {
 	wg.Add(1)
 
 	var name string
@@ -59,14 +57,13 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 		name = server.Name
 	}
 
-	return func(ctx context.Context) {
+	return func(ctx context.Context) error {
 		m.Logger.Log("level", "info", "msg", "Stopping server", "server", name)
 
 		err := server.Shutdown(ctx)
-		if err != nil && err != ctx.Err() {
-			m.ErrorHandler.Handle(err)
-		}
 
 		wg.Done()
+
+		return err
 	}
 }

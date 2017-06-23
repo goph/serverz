@@ -3,10 +3,19 @@
 
 ## Unreleased
 
+### Added
+
+- Multi error returned from `Queue.StopServer`
+
 ### Changed
 
 - Use Go-kit's log interface
 - Panics are not handled by the error handler anymore
+- Manager stop function returns an error
+
+### Removed
+
+- Error handler dependency
 
 
 ## 0.7.0 - 2016-06-19
