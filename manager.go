@@ -22,10 +22,13 @@ func NewManager() *Manager {
 
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
-	lctx := logServerAddr(server, lis)
+	var name string
+	if server, ok := server.(*NamedServer); ok {
+		name = server.Name
+	}
 
 	return func(ch chan<- error) {
-		m.Logger.Info("Starting server", lctx)
+		m.Logger.Log("level", "info", "msg", "Starting server", "addr", lis.Addr().String(), "server", name)
 		ch <- server.Serve(lis)
 	}
 }
@@ -38,9 +41,12 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 		panic(err)
 	}
 
-	lctx := logServerAddr(server, lis)
+	var name string
+	if server, ok := server.(*NamedServer); ok {
+		name = server.Name
+	}
 
-	m.Logger.Info("Listening on address", lctx)
+	m.Logger.Log("level", "info", "msg", "Listening on address", "addr", addr, "server", name)
 
 	return m.StartServer(server, lis)
 }
@@ -49,10 +55,13 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context.Context) {
 	wg.Add(1)
 
-	lctx := logServer(server)
+	var name string
+	if server, ok := server.(*NamedServer); ok {
+		name = server.Name
+	}
 
 	return func(ctx context.Context) {
-		m.Logger.Info("Stopping server", lctx)
+		m.Logger.Log("level", "info", "msg", "Stopping server", "server", name)
 
 		err := server.Shutdown(ctx)
 		if err != nil && err != ctx.Err() {
@@ -61,22 +70,4 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 
 		wg.Done()
 	}
-}
-
-func logServerAddr(s Server, l net.Listener) map[string]interface{} {
-	ctx := logServer(s)
-
-	ctx["addr"] = l.Addr().String()
-
-	return ctx
-}
-
-func logServer(s Server) map[string]interface{} {
-	ctx := make(map[string]interface{})
-
-	if s, ok := s.(*NamedServer); ok {
-		ctx["server"] = s.Name
-	}
-
-	return ctx
 }
