@@ -65,8 +65,9 @@ func (q *Queue) Stop(ctx context.Context) error {
 	merr := newMultiError("An error ocurred during server shutdown")
 
 	for _, server := range q.servers {
+		wg.Add(1)
+
 		go func(server *serverItem) {
-			wg.Add(1)
 			err := q.manager.StopServer(server.server, wg)(ctx)
 			merr.append(err)
 

@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.8.1 - 2017-06-24
+
+### Fixed
+
+- WaitGroup add
+
+
 ## 0.8.0 - 2017-06-24
 
 ### Added
