@@ -49,7 +49,7 @@ func (e *multiError) append(err error) {
 }
 
 // errOrNil spares an if in the caller code by returning nil when the error list is empty.
-func (e *multiError) errOrNil() *multiError {
+func (e *multiError) errOrNil() error {
 	if len(e.errors) == 0 {
 		return nil
 	}

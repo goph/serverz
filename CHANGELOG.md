@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.8.2 - 2017-06-24
+
+### Fixed
+
+- Error return type
+
+
 ## 0.8.1 - 2017-06-24
 
 ### Fixed
