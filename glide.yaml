@@ -2,3 +2,7 @@ package: github.com/goph/serverz
 import:
 - package: google.golang.org/grpc
   version: ^1.4.0
+- package: github.com/go-kit/kit
+  version: ~0.5.0
+  subpackages:
+  - log/level

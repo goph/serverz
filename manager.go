@@ -4,6 +4,9 @@ import (
 	"context"
 	"net"
 	"sync"
+
+	"github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log/level"
 )
 
 // Manager manages multiple Servers' lifecycle.
@@ -13,9 +16,7 @@ type Manager struct {
 
 // NewManager creates a new Manager.
 func NewManager() *Manager {
-	return &Manager{
-		&noopLogger{},
-	}
+	return &Manager{log.NewNopLogger()}
 }
 
 // StartServer creates a server starter function which can be called as a goroutine.
@@ -26,7 +27,11 @@ func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- er
 	}
 
 	return func(ch chan<- error) {
-		m.Logger.Log("level", "info", "msg", "Starting server", "addr", lis.Addr().String(), "server", name)
+		level.Info(m.Logger).Log(
+			"msg", "Starting server",
+			"addr", lis.Addr().String(),
+			"server", name,
+		)
 		ch <- server.Serve(lis)
 	}
 }
@@ -43,7 +48,11 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 		name = server.Name
 	}
 
-	m.Logger.Log("level", "info", "msg", "Listening on address", "addr", addr, "server", name)
+	level.Info(m.Logger).Log(
+		"msg", "Listening on address",
+		"addr", addr,
+		"server", name,
+	)
 
 	return m.StartServer(server, lis)
 }
@@ -58,7 +67,10 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 	}
 
 	return func(ctx context.Context) error {
-		m.Logger.Log("level", "info", "msg", "Stopping server", "server", name)
+		level.Info(m.Logger).Log(
+			"msg", "Stopping server",
+			"server", name,
+		)
 
 		err := server.Shutdown(ctx)
 

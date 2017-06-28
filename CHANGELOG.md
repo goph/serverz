@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.8.3 - 2017-06-28
+
+### Changed
+
+- Use go kit log package for levels and nop implementation
+
+
 ## 0.8.2 - 2017-06-24
 
 ### Fixed
