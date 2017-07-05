@@ -3,6 +3,7 @@ package named_test
 import (
 	"testing"
 
+	"github.com/goph/serverz"
 	"github.com/goph/serverz/mocks"
 	"github.com/goph/serverz/named"
 	"github.com/stretchr/testify/assert"
@@ -15,6 +16,10 @@ func TestNewServer(t *testing.T) {
 
 	assert.Equal(t, s, server.Server)
 	assert.Equal(t, "name", server.ServerName)
+}
+
+func TestServerIsAServer(t *testing.T) {
+	assert.Implements(t, (*serverz.Server)(nil), new(named.Server))
 }
 
 func TestServer_Name(t *testing.T) {
