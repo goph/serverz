@@ -6,6 +6,7 @@
 ### Added
 
 - Testify library and `mocks.Server` server mock
+- `aio.Server` including all additional server features
 
 ### Changed
 
