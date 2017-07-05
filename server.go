@@ -26,8 +26,3 @@ type Server interface {
 	// For a graceful shutdown, use Shutdown.
 	Close() error
 }
-
-// namer exposes a name for something.
-type namer interface {
-	Name() string
-}

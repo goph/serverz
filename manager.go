@@ -9,6 +9,11 @@ import (
 	"github.com/go-kit/kit/log/level"
 )
 
+// namer exposes a name for something.
+type namer interface {
+	Name() string
+}
+
 // Manager manages multiple Servers' lifecycle.
 type Manager struct {
 	Logger logger
