@@ -12,27 +12,15 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type testListener struct{}
-
-func (l *testListener) Accept() (net.Conn, error) {
-	return nil, nil
-}
-
-func (l *testListener) Close() error {
-	return nil
-}
-
-func (l *testListener) Addr() net.Addr {
-	return &net.TCPAddr{
-		IP:   net.ParseIP("127.0.0.1"),
-		Port: 65123,
-	}
-}
-
 func TestServerManagerStartServer(t *testing.T) {
 	serverManager := serverz.NewManager()
 
-	lis := &testListener{}
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer lis.Close()
+
 	server := &mocks.Server{}
 	server.On("Serve", lis).Return(nil)
 
@@ -48,14 +36,14 @@ func TestServerManagerListenAndStartServer(t *testing.T) {
 	serverManager := serverz.NewManager()
 
 	server := &mocks.Server{}
-	server.On("Serve", mock.Anything).Return(func(list net.Listener) error {
-		list.Close()
+	server.On("Serve", mock.Anything).Return(func(lis net.Listener) error {
+		lis.Close()
 
 		return nil
 	})
 
 	ch := make(chan error, 1)
-	serverManager.ListenAndStartServer(server, "127.0.0.1:65123")(ch)
+	serverManager.ListenAndStartServer(server, "127.0.0.1:0")(ch)
 	close(ch)
 
 	server.AssertCalled(t, "Serve", mock.Anything)
