@@ -12,7 +12,7 @@ type Server struct {
 	serverz.Server
 
 	ServerName string
-	Closers    ext.Closers
+	Closer     ext.Closer
 }
 
 // Name returns the server's name.
@@ -22,7 +22,11 @@ func (s *Server) Name() string {
 
 // Close invokes the wrapped server's closer first then the ones from s.Closers if any.
 func (s *Server) Close() error {
-	closers := append(ext.Closers{s.Server}, s.Closers...)
+	closers := ext.Closers{s.Server}
+
+	if s.Closer != nil {
+		closers = append(closers, s.Closer)
+	}
 
 	return closers.Close()
 }

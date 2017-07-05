@@ -25,12 +25,17 @@ func TestServer_Close(t *testing.T) {
 	s := &mocks.Server{}
 	s.On("Close").Return(nil)
 
+	c := &mocks.Closer{}
+	c.On("Close").Return(nil)
+
 	server := &aio.Server{
 		Server: s,
+		Closer: c,
 	}
 
 	server.Close()
 
 	s.AssertCalled(t, "Close")
+	c.AssertCalled(t, "Close")
 	s.AssertExpectations(t)
 }
