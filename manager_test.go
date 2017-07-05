@@ -8,6 +8,8 @@ import (
 	"sync"
 
 	"github.com/goph/serverz"
+	"github.com/goph/serverz/mocks"
+	"github.com/stretchr/testify/mock"
 )
 
 type testListener struct{}
@@ -27,146 +29,52 @@ func (l *testListener) Addr() net.Addr {
 	}
 }
 
-type testServer struct {
-	listener net.Listener
-
-	ServeCalled    bool
-	ShutdownCalled bool
-	CloseCalled    bool
-
-	ServeError    error
-	ShutdownError error
-	CloseError    error
-}
-
-func (s *testServer) Serve(l net.Listener) error {
-	s.listener = l
-	s.ServeCalled = true
-
-	return s.ServeError
-}
-
-func (s *testServer) Shutdown(ctx context.Context) error {
-	s.ShutdownCalled = true
-
-	return s.ShutdownError
-}
-
-func (s *testServer) Close() error {
-	if s.listener != nil {
-		s.listener.Close()
-	}
-
-	s.CloseCalled = true
-
-	return s.CloseError
-}
-
 func TestServerManagerStartServer(t *testing.T) {
-	server := &testServer{}
-
-	testStartServer(t, server)
-}
-
-func TestServerManagerStartServer_NamedServer(t *testing.T) {
-	server := &serverz.NamedServer{
-		Server: &testServer{},
-		Name:   "ServerName",
-	}
-
-	testStartServer(t, server)
-}
-
-func testStartServer(t *testing.T, server serverz.Server) {
 	serverManager := serverz.NewManager()
 
+	lis := &testListener{}
+	server := &mocks.Server{}
+	server.On("Serve", lis).Return(nil)
+
 	ch := make(chan error, 1)
-	serverManager.StartServer(server, &testListener{})(ch)
+	serverManager.StartServer(server, lis)(ch)
 	close(ch)
 
-	var called bool
-
-	if s, ok := server.(*serverz.NamedServer); ok {
-		called = s.Server.(*testServer).ServeCalled
-	} else {
-		called = server.(*testServer).ServeCalled
-	}
-
-	if got, want := called, true; got != want {
-		t.Fatal("serverz: Server.Serve should be called")
-	}
+	server.AssertCalled(t, "Serve", lis)
+	server.AssertExpectations(t)
 }
 
 func TestServerManagerListenAndStartServer(t *testing.T) {
-	server := &testServer{}
-
-	testListenAndStartServer(t, server)
-}
-
-func TestServerManagerListenAndStartServer_NamedServer(t *testing.T) {
-	server := &serverz.NamedServer{
-		Server: &testServer{},
-		Name:   "ServerName",
-	}
-
-	testListenAndStartServer(t, server)
-}
-
-func testListenAndStartServer(t *testing.T, server serverz.Server) {
 	serverManager := serverz.NewManager()
+
+	server := &mocks.Server{}
+	server.On("Serve", mock.Anything).Return(func(list net.Listener) error {
+		list.Close()
+
+		return nil
+	})
 
 	ch := make(chan error, 1)
 	serverManager.ListenAndStartServer(server, "127.0.0.1:65123")(ch)
-	server.Close()
 	close(ch)
 
-	var called bool
-
-	if s, ok := server.(*serverz.NamedServer); ok {
-		called = s.Server.(*testServer).ServeCalled
-	} else {
-		called = server.(*testServer).ServeCalled
-	}
-
-	if got, want := called, true; got != want {
-		t.Fatal("serverz: Server.Serve should be called")
-	}
+	server.AssertCalled(t, "Serve", mock.Anything)
+	server.AssertExpectations(t)
 }
 
 func TestServerManagerStopServer(t *testing.T) {
-	server := &testServer{}
-
-	testStopServer(t, server)
-}
-
-func TestServerManagerStopServer_NamedServer(t *testing.T) {
-	server := &serverz.NamedServer{
-		Server: &testServer{},
-		Name:   "ServerName",
-	}
-
-	testStopServer(t, server)
-}
-
-func testStopServer(t *testing.T, server serverz.Server) {
 	serverManager := serverz.NewManager()
+
+	ctx := context.Background()
+	server := &mocks.Server{}
+	server.On("Shutdown", ctx).Return(nil)
 
 	var wg sync.WaitGroup
 
 	f := serverManager.StopServer(server, &wg)
 
-	ctx := context.Background()
 	f(ctx)
 
-	var called bool
-
-	if s, ok := server.(*serverz.NamedServer); ok {
-		called = s.Server.(*testServer).ShutdownCalled
-	} else {
-		called = server.(*testServer).ShutdownCalled
-	}
-
-	if got, want := called, true; got != want {
-		t.Fatal("serverz: Server.Shutdown should be called")
-	}
+	server.AssertCalled(t, "Shutdown", ctx)
+	server.AssertExpectations(t)
 }

@@ -6,3 +6,9 @@ import:
   version: ~0.5.0
   subpackages:
   - log/level
+testImport:
+- package: github.com/stretchr/testify
+  #version: ^1.1.4
+  subpackages:
+  - mock
+  - suite

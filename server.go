@@ -27,23 +27,7 @@ type Server interface {
 	Close() error
 }
 
-// NamedServer can be used to parametrize logs
-type NamedServer struct {
-	Server Server
-	Name   string
-}
-
-// Serve implements Server interface
-func (ns *NamedServer) Serve(l net.Listener) error {
-	return ns.Server.Serve(l)
-}
-
-// Shutdown implements Server interface
-func (ns *NamedServer) Shutdown(ctx context.Context) error {
-	return ns.Server.Shutdown(ctx)
-}
-
-// Close implements Server
-func (ns *NamedServer) Close() error {
-	return ns.Server.Close()
+// namer exposes a name for something.
+type namer interface {
+	Name() string
 }

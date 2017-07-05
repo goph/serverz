@@ -1,6 +1,17 @@
 # Change Log
 
 
+## Unreleased
+
+### Added
+
+- Testify library and `mocks.Server` server mock
+
+### Changed
+
+- Moved `NamedServer` to `named.Server`
+
+
 ## 0.8.3 - 2017-06-28
 
 ### Changed

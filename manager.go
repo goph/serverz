@@ -22,8 +22,8 @@ func NewManager() *Manager {
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
 	var name string
-	if server, ok := server.(*NamedServer); ok {
-		name = server.Name
+	if server, ok := server.(namer); ok {
+		name = server.Name()
 	}
 
 	return func(ch chan<- error) {
@@ -44,8 +44,8 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 	}
 
 	var name string
-	if server, ok := server.(*NamedServer); ok {
-		name = server.Name
+	if server, ok := server.(namer); ok {
+		name = server.Name()
 	}
 
 	level.Info(m.Logger).Log(
@@ -62,8 +62,8 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 	wg.Add(1)
 
 	var name string
-	if server, ok := server.(*NamedServer); ok {
-		name = server.Name
+	if server, ok := server.(namer); ok {
+		name = server.Name()
 	}
 
 	return func(ctx context.Context) error {
