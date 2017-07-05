@@ -3,6 +3,8 @@ package serverz
 import (
 	"context"
 	"sync"
+
+	"github.com/goph/serverz/internal/errors"
 )
 
 type serverItem struct {
@@ -62,14 +64,15 @@ func (q *Queue) Start() <-chan error {
 // Stop tries to gracefully stop all the servers.
 func (q *Queue) Stop(ctx context.Context) error {
 	wg := &sync.WaitGroup{}
-	merr := newMultiError("An error ocurred during server shutdown")
+	errBuilder := errors.NewMultiErrorBuilder()
+	errBuilder.Message = "An error ocurred during server shutdown"
 
 	for _, server := range q.servers {
 		wg.Add(1)
 
 		go func(server *serverItem) {
 			err := q.manager.StopServer(server.server, wg)(ctx)
-			merr.append(err)
+			errBuilder.Add(err)
 
 			wg.Done()
 		}(server)
@@ -77,5 +80,5 @@ func (q *Queue) Stop(ctx context.Context) error {
 
 	wg.Wait()
 
-	return merr.errOrNil()
+	return errBuilder.ErrOrNil()
 }
