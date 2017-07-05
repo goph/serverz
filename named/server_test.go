@@ -5,6 +5,7 @@ import (
 
 	"github.com/goph/serverz/mocks"
 	"github.com/goph/serverz/named"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewServer(t *testing.T) {
@@ -12,11 +13,14 @@ func TestNewServer(t *testing.T) {
 
 	server := named.NewServer(s, "name")
 
-	if server.Server != s {
-		t.Error("expected the Server member to be set to variable 's'")
+	assert.Equal(t, s, server.Server)
+	assert.Equal(t, "name", server.ServerName)
+}
+
+func TestServer_Name(t *testing.T) {
+	server := &named.Server{
+		ServerName: "name",
 	}
 
-	if got, want := server.ServerName, "name"; got != want {
-		t.Errorf("expected the server's name to be 'name', received: '%s'", server.ServerName)
-	}
+	assert.Equal(t, "name", server.Name())
 }
