@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/goph/serverz"
-	"github.com/goph/serverz/mocks"
+	"github.com/goph/serverz/internal/mocks"
 	"github.com/stretchr/testify/mock"
 )
 

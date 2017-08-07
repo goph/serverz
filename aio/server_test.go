@@ -5,7 +5,7 @@ import (
 
 	"github.com/goph/serverz"
 	"github.com/goph/serverz/aio"
-	"github.com/goph/serverz/mocks"
+	"github.com/goph/serverz/internal/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
