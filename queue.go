@@ -39,7 +39,7 @@ func (q *Queue) Start() <-chan error {
 	ch := make(chan error, 2*len(q.servers))
 
 	for _, server := range q.servers {
-		go q.manager.ListenAndStartServer(server, server.Addr().Network(), server.Addr().String())(ch)
+		go q.manager.ListenAndStartServer(server, server.GetAddr().Network(), server.GetAddr().String())(ch)
 	}
 
 	return ch

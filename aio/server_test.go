@@ -1,6 +1,7 @@
 package aio_test
 
 import (
+	"net"
 	"testing"
 
 	"github.com/goph/serverz"
@@ -21,6 +22,16 @@ func TestServer_Name(t *testing.T) {
 
 	assert.Implements(t, (*internal.NamedServer)(nil), server)
 	assert.Equal(t, "name", server.GetName())
+}
+
+func TestServer_Addr(t *testing.T) {
+	addr := &net.TCPAddr{}
+	server := &aio.Server{
+		Addr: addr,
+	}
+
+	assert.Implements(t, (*serverz.AddrServer)(nil), server)
+	assert.Equal(t, addr, server.GetAddr())
 }
 
 func TestServer_Close(t *testing.T) {
