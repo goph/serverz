@@ -7,6 +7,10 @@
 
 - Moved mocks to internal package
 
+### Removed
+
+- Unused logger interface
+
 
 ## 0.9.0 - 2017-07-05
 

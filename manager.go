@@ -16,7 +16,7 @@ type namer interface {
 
 // Manager manages multiple Servers' lifecycle.
 type Manager struct {
-	Logger logger
+	Logger log.Logger
 }
 
 // NewManager creates a new Manager.
