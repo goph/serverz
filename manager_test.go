@@ -42,7 +42,7 @@ func TestServerManagerListenAndStartServer(t *testing.T) {
 	})
 
 	ch := make(chan error, 1)
-	serverManager.ListenAndStartServer(server, "127.0.0.1:0")(ch)
+	serverManager.ListenAndStartServer(server, "tcp", "127.0.0.1:0")(ch)
 
 	server.AssertCalled(t, "Serve", mock.Anything)
 	server.AssertExpectations(t)

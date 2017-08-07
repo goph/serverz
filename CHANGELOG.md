@@ -3,6 +3,10 @@
 
 ## Unreleased
 
+### Added
+
+- Manager now accepts a network in `ListenAndStartServer`
+
 ### Changed
 
 - Moved mocks to internal package

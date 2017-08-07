@@ -33,8 +33,8 @@ func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- er
 }
 
 // ListenAndStartServer creates a server starter function which listens on a port and can be called as a goroutine
-func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<- error) {
-	lis, err := net.Listen("tcp", addr)
+func (m *Manager) ListenAndStartServer(server Server, network string, addr string) func(ch chan<- error) {
+	lis, err := net.Listen(network, addr)
 	if err != nil {
 		panic(err)
 	}

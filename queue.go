@@ -55,7 +55,7 @@ func (q *Queue) Start() <-chan error {
 	ch := make(chan error, 2*len(q.servers))
 
 	for _, server := range q.servers {
-		go q.manager.ListenAndStartServer(server.server, server.addr)(ch)
+		go q.manager.ListenAndStartServer(server.server, "tcp", server.addr)(ch)
 	}
 
 	return ch
