@@ -6,7 +6,7 @@ import "github.com/goph/serverz"
 type Server struct {
 	serverz.Server
 
-	ServerName string
+	Name string
 }
 
 // NewServer returns a new Server.
@@ -14,7 +14,7 @@ func NewServer(server serverz.Server, name string) *Server {
 	return &Server{server, name}
 }
 
-// Name returns the server's name.
-func (s *Server) Name() string {
-	return s.ServerName
+// GetName returns the name of a server.
+func (s *Server) GetName() string {
+	return s.Name
 }

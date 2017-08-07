@@ -5,6 +5,7 @@ import (
 
 	"github.com/goph/serverz"
 	"github.com/goph/serverz/aio"
+	"github.com/goph/serverz/internal"
 	"github.com/goph/serverz/internal/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,10 +16,11 @@ func TestServerIsAServer(t *testing.T) {
 
 func TestServer_Name(t *testing.T) {
 	server := &aio.Server{
-		ServerName: "name",
+		Name: "name",
 	}
 
-	assert.Equal(t, "name", server.Name())
+	assert.Implements(t, (*internal.NamedServer)(nil), server)
+	assert.Equal(t, "name", server.GetName())
 }
 
 func TestServer_Close(t *testing.T) {

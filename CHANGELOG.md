@@ -6,6 +6,7 @@
 ### Changed
 
 - Moved mocks to internal package
+- Renamed `Name` method to `GetName` (and `ServerName` fields to `Name`)
 
 ### Removed
 

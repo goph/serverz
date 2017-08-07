@@ -11,16 +11,16 @@ import (
 type Server struct {
 	serverz.Server
 
-	ServerName string
-	Closer     ext.Closer
+	Name   string
+	Closer ext.Closer
 }
 
-// Name returns the server's name.
-func (s *Server) Name() string {
-	return s.ServerName
+// GetName returns the name of a server.
+func (s *Server) GetName() string {
+	return s.Name
 }
 
-// Close invokes the wrapped server's closer first then the ones from s.Closers if any.
+// Close invokes the wrapped server's closer first then the ones from s.Closer if any.
 func (s *Server) Close() error {
 	closers := ext.Closers{s.Server}
 

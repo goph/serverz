@@ -7,12 +7,8 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	"github.com/goph/serverz/internal"
 )
-
-// namer exposes a name for something.
-type namer interface {
-	Name() string
-}
 
 // Manager manages multiple Servers' lifecycle.
 type Manager struct {
@@ -27,8 +23,8 @@ func NewManager() *Manager {
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
 	var name string
-	if server, ok := server.(namer); ok {
-		name = server.Name()
+	if server, ok := server.(internal.NamedServer); ok {
+		name = server.GetName()
 	}
 
 	return func(ch chan<- error) {
@@ -49,8 +45,8 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 	}
 
 	var name string
-	if server, ok := server.(namer); ok {
-		name = server.Name()
+	if server, ok := server.(internal.NamedServer); ok {
+		name = server.GetName()
 	}
 
 	level.Info(m.Logger).Log(
@@ -67,8 +63,8 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 	wg.Add(1)
 
 	var name string
-	if server, ok := server.(namer); ok {
-		name = server.Name()
+	if server, ok := server.(internal.NamedServer); ok {
+		name = server.GetName()
 	}
 
 	return func(ctx context.Context) error {
