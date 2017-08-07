@@ -7,12 +7,12 @@ import (
 	"google.golang.org/grpc"
 )
 
-// Server implements the Server interface for a gRPC server
+// Server implements the Server interface for a gRPC server.
 type Server struct {
 	*grpc.Server
 }
 
-// Shutdown implements Server interface
+// Shutdown implements the Server interface.
 func (s *Server) Shutdown(ctx context.Context) error {
 	wg := &sync.WaitGroup{}
 	c := make(chan struct{})
@@ -31,7 +31,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	}
 }
 
-// Close implements Server
+// Close implements the Server interface.
 func (s *Server) Close() error {
 	s.Server.Stop()
 
