@@ -12,6 +12,7 @@
 
 - Unused logger interface
 - Unused constructors
+- gRPC dependency from glide
 
 
 ## 0.9.0 - 2017-07-05
