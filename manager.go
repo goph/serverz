@@ -22,16 +22,11 @@ func NewManager() *Manager {
 
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
-	var name string
-	if server, ok := server.(internal.NamedServer); ok {
-		name = server.GetName()
-	}
-
 	return func(ch chan<- error) {
 		level.Info(m.Logger).Log(
 			"msg", "Starting server",
 			"addr", lis.Addr().String(),
-			"server", name,
+			"server", getServerName(server),
 		)
 		ch <- server.Serve(lis)
 	}
@@ -44,15 +39,10 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 		panic(err)
 	}
 
-	var name string
-	if server, ok := server.(internal.NamedServer); ok {
-		name = server.GetName()
-	}
-
 	level.Info(m.Logger).Log(
 		"msg", "Listening on address",
 		"addr", addr,
-		"server", name,
+		"server", getServerName(server),
 	)
 
 	return m.StartServer(server, lis)
@@ -62,15 +52,10 @@ func (m *Manager) ListenAndStartServer(server Server, addr string) func(ch chan<
 func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context.Context) error {
 	wg.Add(1)
 
-	var name string
-	if server, ok := server.(internal.NamedServer); ok {
-		name = server.GetName()
-	}
-
 	return func(ctx context.Context) error {
 		level.Info(m.Logger).Log(
 			"msg", "Stopping server",
-			"server", name,
+			"server", getServerName(server),
 		)
 
 		err := server.Shutdown(ctx)
@@ -79,4 +64,13 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 
 		return err
 	}
+}
+
+// getServerName extracts the name of the server if it implements internal.NamedServer.
+func getServerName(server Server) (name string) {
+	if server, ok := server.(internal.NamedServer); ok {
+		name = server.GetName()
+	}
+
+	return
 }
