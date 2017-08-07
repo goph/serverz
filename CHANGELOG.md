@@ -6,11 +6,14 @@
 ### Added
 
 - Manager now accepts a network in `ListenAndStartServer`
+- `AddrServer` to represent a server which holds network information
 
 ### Changed
 
 - Moved mocks to internal package
 - Renamed `Name` method to `GetName` (and `ServerName` fields to `Name`)
+- Server queue only accepts `AddrServer`
+
 
 ### Removed
 

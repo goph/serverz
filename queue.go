@@ -7,14 +7,9 @@ import (
 	"github.com/goph/serverz/internal/errors"
 )
 
-type serverItem struct {
-	server Server
-	addr   string
-}
-
 // Queue holds a list of servers and starts them at once.
 type Queue struct {
-	servers []*serverItem
+	servers []AddrServer
 
 	manager *Manager
 }
@@ -27,25 +22,14 @@ func NewQueue(manager *Manager) *Queue {
 }
 
 // Append appends a new server to the list of existing ones.
-func (q *Queue) Append(server Server, addr string) {
-	q.servers = append(
-		q.servers,
-		&serverItem{
-			server: server,
-			addr:   addr,
-		},
-	)
+func (q *Queue) Append(server AddrServer) {
+	q.servers = append(q.servers, server)
 }
 
 // Prepend prepends a new server to the list of existing ones.
-func (q *Queue) Prepend(server Server, addr string) {
+func (q *Queue) Prepend(server AddrServer) {
 	q.servers = append(
-		[]*serverItem{
-			&serverItem{
-				server: server,
-				addr:   addr,
-			},
-		},
+		[]AddrServer{server},
 		q.servers...,
 	)
 }
@@ -55,7 +39,7 @@ func (q *Queue) Start() <-chan error {
 	ch := make(chan error, 2*len(q.servers))
 
 	for _, server := range q.servers {
-		go q.manager.ListenAndStartServer(server.server, "tcp", server.addr)(ch)
+		go q.manager.ListenAndStartServer(server, server.Addr().Network(), server.Addr().String())(ch)
 	}
 
 	return ch
@@ -70,8 +54,8 @@ func (q *Queue) Stop(ctx context.Context) error {
 	for _, server := range q.servers {
 		wg.Add(1)
 
-		go func(server *serverItem) {
-			err := q.manager.StopServer(server.server, wg)(ctx)
+		go func(server AddrServer) {
+			err := q.manager.StopServer(server, wg)(ctx)
 			errBuilder.Add(err)
 
 			wg.Done()
