@@ -45,8 +45,8 @@ func (q *Queue) Start() <-chan error {
 	return ch
 }
 
-// Stop tries to gracefully stop all the servers.
-func (q *Queue) Stop(ctx context.Context) error {
+// Shutdown tries to gracefully stop all the servers.
+func (q *Queue) Shutdown(ctx context.Context) error {
 	wg := &sync.WaitGroup{}
 	errBuilder := errors.NewMultiErrorBuilder()
 	errBuilder.Message = "An error ocurred during server shutdown"

@@ -7,6 +7,10 @@
 
 - `Close` call to server queue
 
+### Changed
+
+- Renamed `Stop` to `Shutdown` in server queue
+
 
 ## 0.10.0 - 2017-08-07
 
