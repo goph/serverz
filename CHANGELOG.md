@@ -1,6 +1,13 @@
 # Change Log
 
 
+## Unreleased
+
+### Added
+
+- `Close` call to server queue
+
+
 ## 0.10.0 - 2017-08-07
 
 ### Added

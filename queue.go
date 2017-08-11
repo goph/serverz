@@ -66,3 +66,16 @@ func (q *Queue) Stop(ctx context.Context) error {
 
 	return errBuilder.ErrOrNil()
 }
+
+// Close immediately calls close for all servers.
+func (q *Queue) Close() error {
+	errBuilder := errors.NewMultiErrorBuilder()
+	errBuilder.Message = "An error ocurred during server close"
+
+	for _, server := range q.servers {
+		err := server.Close()
+		errBuilder.Add(err)
+	}
+
+	return errBuilder.ErrOrNil()
+}
