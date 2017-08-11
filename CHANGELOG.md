@@ -11,6 +11,10 @@
 
 - Renamed `Stop` to `Shutdown` in server queue
 
+### Removed
+
+- Manager parameter from Queue constructor
+
 
 ## 0.10.0 - 2017-08-07
 

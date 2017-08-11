@@ -11,13 +11,13 @@ import (
 type Queue struct {
 	servers []AddrServer
 
-	manager *Manager
+	Manager *Manager
 }
 
 // NewQueue returns a new Queue.
-func NewQueue(manager *Manager) *Queue {
+func NewQueue() *Queue {
 	return &Queue{
-		manager: manager,
+		Manager: NewManager(),
 	}
 }
 
@@ -39,7 +39,7 @@ func (q *Queue) Start() <-chan error {
 	ch := make(chan error, 2*len(q.servers))
 
 	for _, server := range q.servers {
-		go q.manager.ListenAndStartServer(server, server.GetAddr().Network(), server.GetAddr().String())(ch)
+		go q.Manager.ListenAndStartServer(server, server.GetAddr().Network(), server.GetAddr().String())(ch)
 	}
 
 	return ch
@@ -55,7 +55,7 @@ func (q *Queue) Shutdown(ctx context.Context) error {
 		wg.Add(1)
 
 		go func(server AddrServer) {
-			err := q.manager.StopServer(server, wg)(ctx)
+			err := q.Manager.StopServer(server, wg)(ctx)
 			errBuilder.Add(err)
 
 			wg.Done()
