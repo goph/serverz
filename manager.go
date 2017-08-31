@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/goph/serverz/internal"
 )
 
 // Manager manages multiple Servers' lifecycle.
@@ -64,13 +63,4 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 
 		return err
 	}
-}
-
-// getServerName extracts the name of the server if it implements internal.NamedServer.
-func getServerName(server Server) (name string) {
-	if server, ok := server.(internal.NamedServer); ok {
-		name = server.GetName()
-	}
-
-	return
 }
