@@ -1,6 +1,13 @@
 # Change Log
 
 
+## Unreleased
+
+### Added
+
+- Support for virtual addresses and servers without network connectivity
+
+
 ## 0.11.0 - 2017-08-11
 
 ### Added

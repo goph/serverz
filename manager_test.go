@@ -7,13 +7,14 @@ import (
 	"net"
 	"sync"
 
-	"github.com/goph/serverz"
+	. "github.com/goph/serverz"
 	"github.com/goph/serverz/internal/mocks"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestServerManagerStartServer(t *testing.T) {
-	serverManager := serverz.NewManager()
+	serverManager := NewManager()
 
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -32,7 +33,7 @@ func TestServerManagerStartServer(t *testing.T) {
 }
 
 func TestServerManagerListenAndStartServer(t *testing.T) {
-	serverManager := serverz.NewManager()
+	serverManager := NewManager()
 
 	server := &mocks.Server{}
 	server.On("Serve", mock.Anything).Return(func(lis net.Listener) error {
@@ -41,15 +42,20 @@ func TestServerManagerListenAndStartServer(t *testing.T) {
 		return nil
 	})
 
+	addr := NewAddr("tcp", "127.0.0.1:0")
 	ch := make(chan error, 1)
-	serverManager.ListenAndStartServer(server, "tcp", "127.0.0.1:0")(ch)
+	starter, err := serverManager.ListenAndStartServer(server, addr)
+
+	starter(ch)
+
+	require.NoError(t, err)
 
 	server.AssertCalled(t, "Serve", mock.Anything)
 	server.AssertExpectations(t)
 }
 
 func TestServerManagerStopServer(t *testing.T) {
-	serverManager := serverz.NewManager()
+	serverManager := NewManager()
 
 	ctx := context.Background()
 	server := &mocks.Server{}
