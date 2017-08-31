@@ -45,7 +45,7 @@ func (m *Manager) ListenAndStartServer(server Server, addr net.Addr) (func(ch ch
 		}
 	} else {
 		addr = NewAddr("none", "none")
-		lis = newVirtualListener(addr)
+		lis = listen(addr)
 	}
 
 	level.Info(m.Logger).Log(
