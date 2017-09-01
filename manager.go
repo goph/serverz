@@ -9,7 +9,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 )
 
-// Manager manages multiple Servers' lifecycle.
+// Manager manages a Server's lifecycle.
 type Manager struct {
 	logger log.Logger
 }

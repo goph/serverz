@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestServerManagerStartServer(t *testing.T) {
+func TestManager_StartServer(t *testing.T) {
 	serverManager := NewManager()
 
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
@@ -28,11 +28,10 @@ func TestServerManagerStartServer(t *testing.T) {
 	ch := make(chan error, 1)
 	serverManager.StartServer(server, lis)(ch)
 
-	server.AssertCalled(t, "Serve", lis)
 	server.AssertExpectations(t)
 }
 
-func TestServerManagerListenAndStartServer(t *testing.T) {
+func TestManager_ListenAndStartServer(t *testing.T) {
 	serverManager := NewManager()
 
 	server := &mocks.Server{}
@@ -50,11 +49,26 @@ func TestServerManagerListenAndStartServer(t *testing.T) {
 
 	require.NoError(t, err)
 
-	server.AssertCalled(t, "Serve", mock.Anything)
 	server.AssertExpectations(t)
 }
 
-func TestServerManagerStopServer(t *testing.T) {
+func TestManager_ListenAndStartServer_NoAddr(t *testing.T) {
+	serverManager := NewManager()
+
+	server := &mocks.Server{}
+	server.On("Serve", mock.Anything).Return(nil)
+
+	ch := make(chan error, 1)
+	starter, err := serverManager.ListenAndStartServer(server, nil)
+
+	starter(ch)
+
+	require.NoError(t, err)
+
+	server.AssertExpectations(t)
+}
+
+func TestManager_StopServer(t *testing.T) {
 	serverManager := NewManager()
 
 	ctx := context.Background()
@@ -63,10 +77,9 @@ func TestServerManagerStopServer(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	f := serverManager.StopServer(server, &wg)
+	stopper := serverManager.StopServer(server, &wg)
 
-	f(ctx)
+	stopper(ctx)
 
-	server.AssertCalled(t, "Shutdown", ctx)
 	server.AssertExpectations(t)
 }
