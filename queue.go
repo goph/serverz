@@ -36,7 +36,7 @@ func (q *Queue) Prepend(server AddrServer) {
 
 // Start starts all the servers.
 func (q *Queue) Start() <-chan error {
-	ch := make(chan error, 2*len(q.servers))
+	ch := make(chan error, len(q.servers))
 
 	for _, server := range q.servers {
 		starter, err := q.manager.ListenAndStartServer(server, server.GetAddr())
