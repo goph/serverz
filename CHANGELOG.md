@@ -6,6 +6,7 @@
 ### Added
 
 - Support for virtual addresses and servers without network connectivity
+- Functional options to constructors
 
 
 ## 0.11.0 - 2017-08-11

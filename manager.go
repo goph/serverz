@@ -11,18 +11,20 @@ import (
 
 // Manager manages multiple Servers' lifecycle.
 type Manager struct {
-	Logger log.Logger
+	logger log.Logger
 }
 
 // NewManager creates a new Manager.
-func NewManager() *Manager {
-	return &Manager{log.NewNopLogger()}
+func NewManager(opt ...Option) *Manager {
+	opts := newOptions(opt...)
+
+	return &Manager{opts.Logger()}
 }
 
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
 	return func(ch chan<- error) {
-		level.Info(m.Logger).Log(
+		level.Info(m.logger).Log(
 			"msg", "Starting server",
 			"addr", lis.Addr(),
 			"server", getServerName(server),
@@ -48,7 +50,7 @@ func (m *Manager) ListenAndStartServer(server Server, addr net.Addr) (func(ch ch
 		lis = listen(addr)
 	}
 
-	level.Info(m.Logger).Log(
+	level.Info(m.logger).Log(
 		"msg", "Listening on address",
 		"addr", addr,
 		"server", getServerName(server),
@@ -62,7 +64,7 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 	wg.Add(1)
 
 	return func(ctx context.Context) error {
-		level.Info(m.Logger).Log(
+		level.Info(m.logger).Log(
 			"msg", "Stopping server",
 			"server", getServerName(server),
 		)
