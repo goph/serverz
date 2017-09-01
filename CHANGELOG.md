@@ -8,6 +8,10 @@
 - Support for virtual addresses and servers without network connectivity
 - Functional options to constructors
 
+### Changed
+
+- Queue accepts an address as an argument
+
 
 ## 0.11.0 - 2017-08-11
 
