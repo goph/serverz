@@ -52,7 +52,7 @@ func listen(addr net.Addr) (net.Listener, error) {
 	return &listener{addr}, nil
 }
 
-// NewListener returns a new Listener.
+// NewListener returns a new in-memory listener.
 func NewListener(addr net.Addr) net.Listener {
 	return &listener{addr}
 }
