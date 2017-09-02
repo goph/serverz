@@ -39,8 +39,21 @@ type listener struct {
 	addr net.Addr
 }
 
-// listen returns a fake, in-memory listener.
-func listen(addr net.Addr) net.Listener {
+// listen either listens on a real network interface
+// or returns a fake, in-memory listener when no address is provided.
+func listen(addr net.Addr) (net.Listener, error) {
+	// Servers without an address can still work without network.
+	if addr != nil {
+		return net.Listen(addr.Network(), addr.String())
+	}
+
+	addr = NewAddr("none", "none")
+
+	return &listener{addr}, nil
+}
+
+// NewListener returns a new Listener.
+func NewListener(addr net.Addr) net.Listener {
 	return &listener{addr}
 }
 

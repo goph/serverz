@@ -7,10 +7,15 @@
 
 - Support for virtual addresses and servers without network connectivity
 - Functional options to constructors
+- App server implementing all functionalities from `named` and `aio` servers
 
 ### Changed
 
 - Queue accepts an address as an argument
+
+### Removed
+
+- `named` and `aio` servers
 
 
 ## 0.11.0 - 2017-08-11
