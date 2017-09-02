@@ -16,6 +16,7 @@
 ### Removed
 
 - `named` and `aio` servers
+- Direct [go-kit](https://github.com/go-kit/kit) dependency
 
 
 ## 0.11.0 - 2017-08-11

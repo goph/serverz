@@ -1,9 +1,5 @@
 package: github.com/goph/serverz
 import:
-- package: github.com/go-kit/kit
-  version: ~0.5.0
-  subpackages:
-  - log/level
 - package: google.golang.org/grpc
   version: ^1.6.0
 testImport:
@@ -12,3 +8,7 @@ testImport:
   - assert
   - mock
   - suite
+- package: github.com/go-kit/kit
+  version: ~0.5.0
+  subpackages:
+  - log/level

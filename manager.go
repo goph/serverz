@@ -4,14 +4,11 @@ import (
 	"context"
 	"net"
 	"sync"
-
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
 )
 
 // Manager manages a Server's lifecycle.
 type Manager struct {
-	logger log.Logger
+	logger logger
 }
 
 // NewManager creates a new Manager.
@@ -24,7 +21,7 @@ func NewManager(opt ...Option) *Manager {
 // StartServer creates a server starter function which can be called as a goroutine.
 func (m *Manager) StartServer(server Server, lis net.Listener) func(ch chan<- error) {
 	return func(ch chan<- error) {
-		level.Info(m.logger).Log(
+		m.logger.Log(
 			"msg", "Starting server",
 			"addr", lis.Addr(),
 			"server", getServerName(server),
@@ -50,7 +47,7 @@ func (m *Manager) ListenAndStartServer(server Server, addr net.Addr) (func(ch ch
 		lis = &listener{addr}
 	}
 
-	level.Info(m.logger).Log(
+	m.logger.Log(
 		"msg", "Listening on address",
 		"addr", addr,
 		"server", getServerName(server),
