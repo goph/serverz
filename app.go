@@ -42,7 +42,7 @@ func (s *AppServer) Serve(l net.Listener) error {
 // Shutdown attempts to gracefully shut the underlying server down.
 func (s *AppServer) Shutdown(ctx context.Context) error {
 	s.logger().Log(
-		"msg", "Attempting to shut server gracefully down",
+		"msg", "Shutting server gracefully down",
 		"server", s.Name,
 	)
 
@@ -52,7 +52,7 @@ func (s *AppServer) Shutdown(ctx context.Context) error {
 // Close invokes the wrapped server's closer first then the ones from s.Closer if any.
 func (s *AppServer) Close() error {
 	s.logger().Log(
-		"msg", "Closing server",
+		"msg", "Closing all remaining server connections",
 		"server", s.Name,
 	)
 
