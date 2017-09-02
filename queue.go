@@ -6,12 +6,14 @@ import (
 	"sync"
 )
 
+type queueItem struct {
+	server Server
+	addr   net.Addr
+}
+
 // Queue holds a list of servers and starts them at once.
 type Queue struct {
-	servers []struct {
-		server Server
-		addr   net.Addr
-	}
+	servers []*queueItem
 }
 
 // NewQueue returns a new Queue.
@@ -23,10 +25,7 @@ func NewQueue() *Queue {
 func (q *Queue) Append(server Server, addr net.Addr) {
 	q.servers = append(
 		q.servers,
-		struct {
-			server Server
-			addr   net.Addr
-		}{
+		&queueItem{
 			server,
 			addr,
 		},
@@ -36,11 +35,8 @@ func (q *Queue) Append(server Server, addr net.Addr) {
 // Prepend prepends a new server to the list of existing ones.
 func (q *Queue) Prepend(server Server, addr net.Addr) {
 	q.servers = append(
-		[]struct {
-			server Server
-			addr   net.Addr
-		}{
-			{
+		[]*queueItem{
+			&queueItem{
 				server,
 				addr,
 			},
