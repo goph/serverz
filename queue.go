@@ -4,8 +4,6 @@ import (
 	"context"
 	"net"
 	"sync"
-
-	"github.com/goph/serverz/internal/errors"
 )
 
 // Queue holds a list of servers and starts them at once.
@@ -84,15 +82,16 @@ func (q *Queue) Start() <-chan error {
 // Shutdown tries to gracefully stop all the servers.
 func (q *Queue) Shutdown(ctx context.Context) error {
 	wg := &sync.WaitGroup{}
-	errBuilder := errors.NewMultiErrorBuilder()
-	errBuilder.Message = "An error ocurred during server shutdown"
+	merr := multiError{}
 
 	for _, s := range q.servers {
 		wg.Add(1)
 
 		go func(server Server) {
 			err := q.manager.StopServer(server, wg)(ctx)
-			errBuilder.Add(err)
+			if err != nil {
+				merr = append(merr, err)
+			}
 
 			wg.Done()
 		}(s.server)
@@ -100,18 +99,20 @@ func (q *Queue) Shutdown(ctx context.Context) error {
 
 	wg.Wait()
 
-	return errBuilder.ErrOrNil()
+	return merr.ErrOrNil()
 }
 
 // Close immediately calls close for all servers.
 func (q *Queue) Close() error {
-	errBuilder := errors.NewMultiErrorBuilder()
-	errBuilder.Message = "An error ocurred during server close"
+	merr := multiError{}
 
 	for _, s := range q.servers {
 		err := s.server.Close()
-		errBuilder.Add(err)
+
+		if err != nil {
+			merr = append(merr, err)
+		}
 	}
 
-	return errBuilder.ErrOrNil()
+	return merr.ErrOrNil()
 }

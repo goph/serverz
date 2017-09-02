@@ -47,7 +47,7 @@ func (m *Manager) ListenAndStartServer(server Server, addr net.Addr) (func(ch ch
 		}
 	} else {
 		addr = NewAddr("none", "none")
-		lis = listen(addr)
+		lis = &listener{addr}
 	}
 
 	level.Info(m.logger).Log(
@@ -64,11 +64,6 @@ func (m *Manager) StopServer(server Server, wg *sync.WaitGroup) func(ctx context
 	wg.Add(1)
 
 	return func(ctx context.Context) error {
-		level.Info(m.logger).Log(
-			"msg", "Stopping server",
-			"server", getServerName(server),
-		)
-
 		err := server.Shutdown(ctx)
 
 		wg.Done()
