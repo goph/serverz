@@ -17,6 +17,7 @@
 
 - `named` and `aio` servers
 - Direct [go-kit](https://github.com/go-kit/kit) dependency
+- Manager is no longer necessary (most of it's functionality is moved to `Queue` and `AppServer`)
 
 
 ## 0.11.0 - 2017-08-11

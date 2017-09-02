@@ -14,7 +14,6 @@ import (
 
 func TestAppServerIsAServer(t *testing.T) {
 	assert.Implements(t, (*Server)(nil), new(AppServer))
-	assert.Implements(t, (*ListenServer)(nil), new(AppServer))
 }
 
 func TestAppServer_Serve(t *testing.T) {

@@ -27,8 +27,8 @@ type Server interface {
 	Close() error
 }
 
-// ListenServer can listen on an interface on its own when provided with an address.
-type ListenServer interface {
+// listenServer can listen on an interface on its own when provided with an address.
+type listenServer interface {
 	// ListenAndServe listens on a network address and then
 	// calls Serve to handle requests on incoming connections.
 	ListenAndServe(addr net.Addr) error

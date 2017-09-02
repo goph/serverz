@@ -12,24 +12,15 @@ type Queue struct {
 		server Server
 		addr   net.Addr
 	}
-
-	manager *Manager
 }
 
 // NewQueue returns a new Queue.
-func NewQueue(opt ...Option) *Queue {
-	return &Queue{
-		manager: NewManager(opt...),
-	}
+func NewQueue() *Queue {
+	return new(Queue)
 }
 
 // Append appends a new server to the list of existing ones.
 func (q *Queue) Append(server Server, addr net.Addr) {
-	// When no addr is provided try getting one from the server
-	if s, ok := server.(AddrServer); ok && addr == nil {
-		addr = s.GetAddr()
-	}
-
 	q.servers = append(
 		q.servers,
 		struct {
@@ -44,11 +35,6 @@ func (q *Queue) Append(server Server, addr net.Addr) {
 
 // Prepend prepends a new server to the list of existing ones.
 func (q *Queue) Prepend(server Server, addr net.Addr) {
-	// When no addr is provided try getting one from the server
-	if s, ok := server.(AddrServer); ok && addr == nil {
-		addr = s.GetAddr()
-	}
-
 	q.servers = append(
 		[]struct {
 			server Server
@@ -68,12 +54,24 @@ func (q *Queue) Start() <-chan error {
 	ch := make(chan error, len(q.servers))
 
 	for _, s := range q.servers {
-		starter, err := q.manager.ListenAndStartServer(s.server, s.addr)
-		if err != nil {
-			panic(err)
-		}
+		if ls, ok := s.server.(listenServer); ok {
+			go func(ch chan<- error, server listenServer, addr net.Addr) {
+				ch <- server.ListenAndServe(addr)
+			}(ch, ls, s.addr)
+		} else {
+			lis, err := listen(s.addr)
+			if err != nil {
+				ch <- err
 
-		go starter(ch)
+				// Skip starting this server if we can't listen on the interface
+				// Consuming to the error channel should end up being the application terminated anyway
+				continue
+			}
+
+			go func(ch chan<- error, server Server, lis net.Listener) {
+				ch <- server.Serve(lis)
+			}(ch, s.server, lis)
+		}
 	}
 
 	return ch
@@ -88,7 +86,7 @@ func (q *Queue) Shutdown(ctx context.Context) error {
 		wg.Add(1)
 
 		go func(server Server) {
-			err := q.manager.StopServer(server, wg)(ctx)
+			err := server.Shutdown(ctx)
 			if err != nil {
 				merr = append(merr, err)
 			}
