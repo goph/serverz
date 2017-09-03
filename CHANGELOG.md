@@ -8,6 +8,7 @@
 - Support for virtual addresses and servers without network connectivity
 - Functional options to constructors
 - App server implementing all functionalities from `named` and `aio` servers
+- Daemon and cron server implementations
 
 ### Changed
 
