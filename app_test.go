@@ -96,7 +96,7 @@ func TestAppServer_Shutdown(t *testing.T) {
 
 	server.Shutdown(ctx)
 
-	assert.Equal(t, "msg=\"Attempting to shut server gracefully down\" server=server\n", buf.String())
+	assert.Equal(t, "msg=\"Shutting server gracefully down\" server=server\n", buf.String())
 
 	serverMock.AssertExpectations(t)
 }
@@ -122,7 +122,7 @@ func TestAppServer_Close(t *testing.T) {
 
 	server.Close()
 
-	assert.Equal(t, "msg=\"Closing server\" server=server\n", buf.String())
+	assert.Equal(t, "msg=\"Closing all remaining server connections\" server=server\n", buf.String())
 
 	serverMock.AssertExpectations(t)
 	closerMock.AssertExpectations(t)
