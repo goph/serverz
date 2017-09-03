@@ -5,8 +5,8 @@ import (
 	"net"
 )
 
-// Server in this context is an abstraction over anything that can be started and stopped (either gracefully or forcefully)
-// Typically they accept connections and serve over network, like HTTP or RPC servers
+// Server in this context is an abstraction over anything that can be started and stopped (either gracefully or forcefully).
+// Typically they accept connections and serve over network, like HTTP servers.
 type Server interface {
 	// Serve accepts incoming connections on the Listener l.
 	//
