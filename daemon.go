@@ -74,7 +74,7 @@ func (s *DaemonServer) closeDoneChanLocked() {
 // Serve starts the daemon.
 func (s *DaemonServer) Serve(l net.Listener) error {
 	if s.Daemon == nil {
-		return errors.New("No daemon is specified")
+		return errors.New("no daemon specified")
 	}
 
 	err := s.Daemon.Run(s.getQuitChan())
@@ -124,7 +124,7 @@ type CronDaemon struct {
 // Run implements the Daemon interface.
 func (d *CronDaemon) Run(quit <-chan struct{}) error {
 	if d.Job == nil {
-		return errors.New("No job is specified")
+		return errors.New("no job specified")
 	}
 
 	if d.Ticker == nil {

@@ -5,7 +5,7 @@ type multiError []error
 
 // Error implements the error interface.
 func (e multiError) Error() string {
-	return "Multiple errors happened"
+	return "multiple errors happened"
 }
 
 // Errors implements the emperror.ErrorCollection interface.

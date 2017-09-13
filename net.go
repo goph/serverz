@@ -59,7 +59,7 @@ func NewListener(addr net.Addr) net.Listener {
 
 // Accept immediately returns with an error since it's noop.
 func (l *listener) Accept() (net.Conn, error) {
-	return nil, errors.New("This listener is not capable of serving any connections")
+	return nil, errors.New("listener is not capable of serving any connections")
 }
 
 // Close is noop.
