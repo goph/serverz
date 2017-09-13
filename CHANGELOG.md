@@ -1,6 +1,13 @@
 # Change Log
 
 
+## Unreleased
+
+### Changed
+
+- Improved log and error messages
+
+
 ## 0.12.0 - 2017-09-03
 
 ### Added
