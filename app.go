@@ -31,7 +31,7 @@ type AppServer struct {
 // Serve calls the underlying server.
 func (s *AppServer) Serve(l net.Listener) error {
 	s.logger().Log(
-		"msg", "Starting server",
+		"msg", "starting server",
 		"addr", l.Addr(),
 		"server", s.Name,
 	)
@@ -42,7 +42,7 @@ func (s *AppServer) Serve(l net.Listener) error {
 // Shutdown attempts to gracefully shut the underlying server down.
 func (s *AppServer) Shutdown(ctx context.Context) error {
 	s.logger().Log(
-		"msg", "Shutting server gracefully down",
+		"msg", "shutting server gracefully down",
 		"server", s.Name,
 	)
 
@@ -52,7 +52,7 @@ func (s *AppServer) Shutdown(ctx context.Context) error {
 // Close invokes the wrapped server's closer first then the ones from s.Closer if any.
 func (s *AppServer) Close() error {
 	s.logger().Log(
-		"msg", "Closing all remaining server connections",
+		"msg", "closing all remaining server connections",
 		"server", s.Name,
 	)
 
@@ -79,7 +79,7 @@ func (s *AppServer) ListenAndServe(addr net.Addr) error {
 	}
 
 	s.logger().Log(
-		"msg", "Listening on address",
+		"msg", "listening on address",
 		"addr", lis.Addr().String(),
 		"server", s.Name,
 	)

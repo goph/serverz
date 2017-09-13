@@ -35,7 +35,7 @@ func TestAppServer_Serve(t *testing.T) {
 
 	server.Serve(lis)
 
-	assert.Equal(t, "msg=\"Starting server\" addr=none server=server\n", buf.String())
+	assert.Equal(t, "msg=\"starting server\" addr=none server=server\n", buf.String())
 
 	serverMock.AssertExpectations(t)
 }
@@ -57,7 +57,7 @@ func TestAppServer_ListenAndServe(t *testing.T) {
 
 	server.ListenAndServe(nil)
 
-	assert.Equal(t, "msg=\"Listening on address\" addr=none server=server\nmsg=\"Starting server\" addr=none server=server\n", buf.String())
+	assert.Equal(t, "msg=\"listening on address\" addr=none server=server\nmsg=\"starting server\" addr=none server=server\n", buf.String())
 
 	serverMock.AssertExpectations(t)
 }
@@ -96,7 +96,7 @@ func TestAppServer_Shutdown(t *testing.T) {
 
 	server.Shutdown(ctx)
 
-	assert.Equal(t, "msg=\"Shutting server gracefully down\" server=server\n", buf.String())
+	assert.Equal(t, "msg=\"shutting server gracefully down\" server=server\n", buf.String())
 
 	serverMock.AssertExpectations(t)
 }
@@ -122,7 +122,7 @@ func TestAppServer_Close(t *testing.T) {
 
 	server.Close()
 
-	assert.Equal(t, "msg=\"Closing all remaining server connections\" server=server\n", buf.String())
+	assert.Equal(t, "msg=\"closing all remaining server connections\" server=server\n", buf.String())
 
 	serverMock.AssertExpectations(t)
 	closerMock.AssertExpectations(t)
