@@ -52,7 +52,7 @@ func (s *AppServer) Shutdown(ctx context.Context) error {
 // Close invokes the wrapped server's closer first then the ones from s.Closer if any.
 func (s *AppServer) Close() error {
 	s.logger().Log(
-		"msg", "closing all remaining server connections",
+		"msg", "closing all remaining connections",
 		"server", s.Name,
 	)
 

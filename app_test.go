@@ -122,7 +122,7 @@ func TestAppServer_Close(t *testing.T) {
 
 	server.Close()
 
-	assert.Equal(t, "msg=\"closing all remaining server connections\" server=server\n", buf.String())
+	assert.Equal(t, "msg=\"closing all remaining connections\" server=server\n", buf.String())
 
 	serverMock.AssertExpectations(t)
 	closerMock.AssertExpectations(t)
